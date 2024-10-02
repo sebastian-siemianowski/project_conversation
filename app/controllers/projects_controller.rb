@@ -1,13 +1,14 @@
 class ProjectsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_project, only: [:show, :edit, :update, :destroy, :change_status]
+  before_action :authorize_admin!, only: [:edit, :update, :destroy, :change_status]
 
   def index
     @projects = Project.all
   end
 
   def show
-    @comments = @project.comments
+    @comments = @project.comments.order(created_at: :desc).page(params[:page]).per(5)
   end
 
   def new
@@ -56,5 +57,9 @@ class ProjectsController < ApplicationController
 
   def project_params
     params.require(:project).permit(:title, :description, :status)
+  end
+
+  def authorize_admin!
+    redirect_to projects_path, alert: 'You are not authorized to perform this action.' unless current_user.admin?
   end
 end

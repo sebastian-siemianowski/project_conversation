@@ -1,0 +1,26 @@
+<!-- app/views/comments/edit.html.erb -->
+<h1 class="text-2xl font-bold mb-4">Edit Comment</h1>
+
+<%= form_with(model: [@project, @comment], local: true, class: "bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4") do |form| %>
+  <% if @comment.errors.any? %>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+      <h2><%= pluralize(@comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+      <ul>
+        <% @comment.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <%= form.label :content, class: "block text-gray-700 text-sm font-bold mb-2" %>
+    <%= form.text_area :content, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <%= form.submit "Update Comment", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  </div>
+<% end %>
+
+<%= link_to 'Back to Project', project_path(@project), class: 'text-blue-500 hover:underline' %>
