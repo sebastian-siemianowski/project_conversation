@@ -1,0 +1,5 @@
+<!-- app/views/comments/_comment.html.erb -->
+<div class="border-b border-gray-300 mb-2 pb-2">
+  <p class="text-gray-700"><%= comment.content %></p>
+  <p class="text-sm text-gray-500">Posted by: <%= comment.user.email %> on <%= comment.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+</div>
