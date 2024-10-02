@@ -1,4 +1,16 @@
 <!-- app/views/projects/show.html.erb -->
+<h1 class="text-2xl font-bold mb-4"><%= @project.title %></h1>
+<p><%= @project.description %></p>
+<p>Status: <strong><%= @project.status&.capitalize %></strong></p>
+
+<% if current_user.admin? %>
+  <h2 class="text-lg font-semibold mt-4">Change Project Status</h2>
+  <%= form_with url: change_status_project_path(@project), method: :patch, local: true, class: "mb-4" do |form| %>
+    <%= form.select :status, Project.statuses.keys.map { |status| [status.humanize, status] }, {}, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2" %>
+    <%= form.submit "Update Status", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  <% end %>
+<% end %>
+
 <div id="comments">
   <h2 class="text-lg font-semibold mb-4">Comments</h2>
 

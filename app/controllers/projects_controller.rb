@@ -43,6 +43,10 @@ class ProjectsController < ApplicationController
     @project.status = params[:status]
     if @project.save
       StatusChange.create!(project: @project, user: current_user, status: @project.status, changed_at: Time.current)
+      @project.comments.create!(
+        content: "Project status changed to #{@project.status&.humanize} by #{current_user.email}",
+        user: current_user
+      )
       redirect_to @project, notice: 'Project status was successfully changed.'
     else
       redirect_to @project, alert: 'Unable to change project status.'
