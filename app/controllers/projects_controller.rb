@@ -8,8 +8,18 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @comments = @project.comments.order(created_at: :desc).page(params[:page]).per(5)
+    @project = Project.find(params[:id])
+    @comments = @project.comments.order(created_at: :asc).page(params[:page]).per(10)
+    if params[:page].blank?
+      @comments = @project.comments.order(:created_at).page(@comments.total_pages).per(10)
+    end
+
+    respond_to do |format|
+      format.html # renders show.html.erb
+      format.turbo_stream # renders the turbo frame response
+    end
   end
+
 
   def new
     @project = Project.new

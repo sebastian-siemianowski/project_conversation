@@ -1,3 +1,5 @@
 <!-- app/views/comments/create.turbo_stream.erb -->
-<%= turbo_stream.append 'comments', partial: 'comments/comment', locals: { comment: @comment } %>
-<%= turbo_stream.replace 'comment_form', partial: 'comments/form', locals: { comment: Comment.new } %>
+<%= turbo_stream.append 'comments_list', partial: 'comments/comment', locals: { comment: @comment } %>
+<%= turbo_stream.replace 'comment_form', partial: 'comments/form', locals: { comment: @project.comments.build } %>
+
+<%= turbo_stream.replace "pagination", partial: 'comments/pagination', locals: { comments: @project.comments.order(:created_at).page(@project.comments.page.total_pages) } %>
