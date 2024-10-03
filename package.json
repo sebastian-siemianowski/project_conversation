@@ -1,0 +1,14 @@
+{
+  "name": "project_conversation",
+  "version": "1.0.0",
+  "description": "This is a test challenge project for the project conversation",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -4,7 +4,7 @@ class ProjectsController < ApplicationController
   before_action :authorize_admin!, only: [:edit, :update, :destroy, :change_status]
 
   def index
-    @projects = Project.all
+    @projects = Project.all.order(created_at: :asc) # Ensure projects are ordered for consistency
   end
 
   def show
@@ -27,13 +27,21 @@ class ProjectsController < ApplicationController
 
   def create
     @project = current_user.projects.build(project_params)
+
     if @project.save
-      redirect_to @project, notice: 'Project was successfully created.'
+      @projects = Project.all.order(created_at: :asc) # Make sure to fetch all projects
+
+      respond_to do |format|
+        format.html { redirect_to projects_path, notice: 'Project was successfully created.' }
+        format.turbo_stream # This will render create.turbo_stream.erb
+      end
     else
-      render :new
+      respond_to do |format|
+        format.html { render :new }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('new_project_form', partial: 'form', locals: { project: @project }) }
+      end
     end
   end
-
   def edit; end
 
   def update
@@ -46,7 +54,10 @@ class ProjectsController < ApplicationController
 
   def destroy
     @project.destroy
-    redirect_to projects_path, notice: 'Project was successfully deleted.'
+    respond_to do |format|
+      format.html { redirect_to projects_path, notice: 'Project was successfully deleted.' }
+      format.turbo_stream # Add this line to handle Turbo Stream responses
+    end
   end
 
   def change_status
@@ -57,9 +68,16 @@ class ProjectsController < ApplicationController
         content: "Project status changed to #{@project.status&.humanize} by #{current_user.email}",
         user: current_user
       )
-      redirect_to @project, notice: 'Project status was successfully changed.'
+
+      respond_to do |format|
+        format.html { redirect_to @project, notice: 'Project status was successfully changed.' }
+        format.turbo_stream # Add this to handle Turbo Stream responses
+      end
     else
-      redirect_to @project, alert: 'Unable to change project status.'
+      respond_to do |format|
+        format.html { redirect_to @project, alert: 'Unable to change project status.' }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('status_errors', partial: 'shared/errors', locals: { errors: @project.errors }) }
+      end
     end
   end
 
