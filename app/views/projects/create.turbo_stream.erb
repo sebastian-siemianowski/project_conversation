@@ -1,0 +1,19 @@
+<!-- app/views/projects/create.turbo_stream.erb -->
+
+<%= turbo_stream.replace 'projects_list' do %>
+  <%= turbo_frame_tag 'projects_list' do %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% Project.all.each do |project| %>
+        <%= render partial: 'projects/project', locals: { project: project } %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace 'new_project_form' do %>
+  <%= turbo_frame_tag 'new_project_form' do %>
+    <div class="text-center mb-12">
+      <%= link_to 'New Project', new_project_path, class: 'inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out', data: { turbo_frame: 'new_project_form' } %>
+    </div>
+  <% end %>
+<% end %>

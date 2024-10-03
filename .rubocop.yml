@@ -1,0 +1,78 @@
+inherit_from: .rubocop_todo.yml
+
+# Enforce the Ruby version your project is using
+AllCops:
+  SuggestExtensions: false
+  TargetRubyVersion: 3.0
+  NewCops: enable
+  Exclude:
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'bin/**/*'
+    - 'vendor/**/*'
+
+# Enforce maximum line length to promote readability
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
+    - 'config/initializers/**/*'
+    - 'db/migrate/**/*'
+    - 'Gemfile'
+
+# Disable Style/Documentation if you don’t want to force every class/module to have a doc comment
+Style/Documentation:
+  Enabled: false
+
+# Allow slight method length flexibility
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'spec/**/*'
+
+# Enforce safe navigation (`&.`) usage
+Style/SafeNavigation:
+  Enabled: true
+
+# Enforce the use of double quotes only when string interpolation is present
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  ConsistentQuotesInMultiline: true
+
+# Allow flexibility with class length
+Metrics/ClassLength:
+  Max: 200
+
+# Allow small functions to use one-line conditionals
+Style/GuardClause:
+  Enabled: true
+
+# Enforce 2 spaces for indentation
+Layout/IndentationWidth:
+  Width: 2
+
+# Reduce the maximum number of arguments for methods
+Metrics/ParameterLists:
+  Max: 5
+  Exclude:
+    - 'spec/**/*'
+
+# Enforce consistent use of hashes (style: new syntax)
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+# Allow multi-line method chains to be broken over multiple lines for readability
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Prefer `detect` over `find`, as it is more explicit
+Style/CollectionMethods:
+  PreferredMethods:
+    find: 'detect'
+
+# Require trailing commas in multiline hashes and arrays
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+

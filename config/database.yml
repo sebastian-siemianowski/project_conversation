@@ -82,5 +82,7 @@ test:
 production:
   <<: *default
   database: project_conversation_production
-  username: project_conversation
-  password: <%= ENV["PROJECT_CONVERSATION_DATABASE_PASSWORD"] %>
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  host: <%= ENV['DB_HOST'] || 'localhost' %>
+

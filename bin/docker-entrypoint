@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+# Check if the database exists
+if ! psql $DATABASE_URL -c '\q'; then
+  echo "Database does not exist. Creating database..."
+  bundle exec rails db:create
+  bundle exec rails db:migrate
+  bundle exec rails db:seed
+else
+  echo "Database exists. Running migrations..."
+  bundle exec rails db:migrate
+fi
+
+# Start the server
+exec "$@"

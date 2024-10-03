@@ -1,4 +1,7 @@
 <!-- app/views/projects/show.html.erb -->
+<!-- Projects List wrapped in Turbo Frame -->
+<%= turbo_frame_tag 'projects_list' do %>
+
 <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mb-8">
   <!-- Project Title and Description Section -->
   <div class="mb-8">
@@ -83,3 +86,4 @@
         }
     }
 </script>
+<% end %>
