@@ -31,16 +31,30 @@ class CommentsController < ApplicationController
 
   def update
     if @comment.update(comment_params)
-      redirect_to @project, notice: 'Comment was successfully updated.'
+      respond_to do |format|
+        format.html { redirect_to @project, notice: 'Comment was successfully updated.' }
+        format.turbo_stream
+      end
     else
-      render :edit
+      respond_to do |format|
+        format.html { render :edit }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: 'comments/comment', locals: { comment: @comment })
+        end
+      end
     end
   end
 
   def destroy
+    @project = @comment.project
     @comment.destroy
-    redirect_to @project, notice: 'Comment was successfully deleted.'
+
+    respond_to do |format|
+      format.html { redirect_to @project, notice: 'Comment was successfully deleted.' }
+      format.turbo_stream
+    end
   end
+
 
   private
 

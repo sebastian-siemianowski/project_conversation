@@ -1,89 +1,88 @@
 <!-- app/views/projects/show.html.erb -->
-<!-- Projects List wrapped in Turbo Frame -->
 <%= turbo_frame_tag 'projects_list' do %>
+  <% # Use local variables if provided, otherwise fall back to instance variables %>
+  <% current_project = local_assigns[:project] || @project %>
+  <% current_comments = local_assigns[:comments] || @comments %>
 
-<div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mb-8">
-  <!-- Project Title and Description Section -->
-  <div class="mb-8">
-    <h1 class="text-5xl font-bold text-gray-900 mb-4"><%= @project.title %></h1>
-    <p class="text-lg text-gray-700 mb-6 leading-relaxed"><%= @project.description %></p>
-    <hr class="border-gray-300 my-6">
-  </div>
-
-  <!-- Status Section -->
-  <div class="bg-gray-100 p-6 rounded-lg mb-8 shadow-sm">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-2xl font-medium text-gray-700 mb-2">Current Status:</p>
-        <span class="inline-block px-4 py-2 rounded-full text-lg font-semibold <%= status_classes(@project.status) %>">
-          <%= @project.status.to_s.humanize %>
-        </span>
-      </div>
-
-      <!-- Edit Status Button for Admins -->
-      <% if current_user.admin? %>
-        <button onclick="toggleStatusForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded-full shadow-md transition duration-200 ease-in-out">
-          Edit Status
-        </button>
-      <% end %>
+  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 mb-8">
+    <!-- Project Title and Description Section -->
+    <div class="mb-8">
+      <h1 class="text-5xl font-bold text-gray-900 mb-4"><%= current_project.title %></h1>
+      <p class="text-lg text-gray-700 mb-6 leading-relaxed"><%= current_project.description %></p>
+      <hr class="border-gray-300 my-6">
     </div>
 
-    <!-- Inline Status Edit Form (Initially Hidden) -->
-    <% if current_user.admin? %>
-      <div id="status-edit-form" class="mt-4 hidden opacity-0 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
-        <%= form_with url: change_status_project_path(@project), method: :patch, local: true, class: "space-y-4" do |form| %>
-          <div class="flex items-center space-x-4">
-            <!-- Updated Select Box Styling -->
-            <%= form.select :status, Project.statuses.keys.map { |status| [status.humanize, status] }, {}, class: "w-1/2 bg-white border border-gray-300 rounded-full py-2 px-4 text-gray-700 focus:outline-none focus:ring-0 focus:border-blue-500 shadow-sm transition duration-300" %>
+    <!-- Status Section -->
+    <div class="bg-gray-100 p-6 rounded-lg mb-8 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-medium text-gray-700 mb-2">Current Status:</p>
+          <span class="inline-block px-4 py-2 rounded-full text-lg font-semibold <%= status_classes(current_project.status) %>">
+            <%= current_project.status.to_s.humanize %>
+          </span>
+        </div>
 
-            <!-- Submit and Cancel Buttons -->
-            <%= form.submit "Update Status", class: "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-full transition duration-200 ease-in-out shadow-md" %>
-            <button type="button" onclick="toggleStatusForm()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-5 rounded-full transition duration-200 ease-in-out shadow-md">
-              Cancel
-            </button>
-          </div>
+        <!-- Edit Status Button for Admins -->
+        <% if current_user.admin? %>
+          <button onclick="toggleStatusForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded-full shadow-md transition duration-200 ease-in-out">
+            Edit Status
+          </button>
         <% end %>
       </div>
-    <% end %>
-  </div>
 
-  <!-- Comments Section -->
-  <div class="bg-gray-50 shadow-inner rounded-lg p-8">
-    <h2 class="text-3xl font-semibold text-gray-800 mb-6">Comments</h2>
-    <div id="comments_list" class="space-y-4">
-      <% @comments.each do |comment| %>
-        <%= render partial: 'comments/comment', locals: { comment: comment } %>
+      <!-- Inline Status Edit Form (Initially Hidden) -->
+      <% if current_user.admin? %>
+        <div id="status-edit-form" class="mt-4 hidden opacity-0 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+          <%= form_with url: change_status_project_path(current_project), method: :patch, local: true, class: "space-y-4" do |form| %>
+            <div class="flex items-center space-x-4">
+              <%= form.select :status, Project.statuses.keys.map { |status| [status.humanize, status] }, {}, class: "w-1/2 bg-white border border-gray-300 rounded-full py-2 px-4 text-gray-700 focus:outline-none focus:ring-0 focus:border-blue-500 shadow-sm transition duration-300" %>
+              <%= form.submit "Update Status", class: "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-full transition duration-200 ease-in-out shadow-md" %>
+              <button type="button" onclick="toggleStatusForm()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-5 rounded-full transition duration-200 ease-in-out shadow-md">
+                Cancel
+              </button>
+            </div>
+          <% end %>
+        </div>
       <% end %>
     </div>
 
-    <div id="pagination" class="mt-6">
-      <%= paginate @comments %>
+    <!-- Comments Section -->
+    <div class="bg-gray-50 shadow-inner rounded-lg p-8">
+      <h2 class="text-3xl font-semibold text-gray-800 mb-6">Comments</h2>
+      <div id="comments_list" class="space-y-4">
+        <% current_comments.each do |comment| %>
+          <%= render partial: 'comments/comment', locals: { comment: comment } %>
+        <% end %>
+      </div>
+
+      <div id="pagination" class="mt-6">
+        <%= paginate current_comments %>
+      </div>
+
+      <!-- Add Comment Section -->
+      <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Add a Comment</h3>
+      <%= turbo_frame_tag 'comment_form' do %>
+        <%= render 'comments/form', comment: current_project.comments.build %>
+      <% end %>
     </div>
-
-    <!-- Add Comment Section -->
-    <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Add a Comment</h3>
-    <%= turbo_frame_tag 'comment_form' do %>
-      <%= render 'comments/form', comment: @project.comments.build %>
-    <% end %>
   </div>
-</div>
 
-<!-- JavaScript for Inline Status Edit Toggle -->
-<script>
-    function toggleStatusForm() {
-        const statusForm = document.getElementById('status-edit-form');
+  <!-- JavaScript for Inline Status Edit Toggle -->
+  <script>
+      function toggleStatusForm() {
+          const statusForm = document.getElementById('status-edit-form');
 
-        if (statusForm.classList.contains('hidden')) {
-            statusForm.classList.remove('hidden');
-            statusForm.style.maxHeight = statusForm.scrollHeight + 'px';
-            statusForm.style.opacity = 1;
-        } else {
-            statusForm.style.maxHeight = '0';
-            statusForm.style.opacity = 0;
-            setTimeout(() => {
-                statusForm.classList.add('hidden');
-            }, 500); // matches the duration in CSS
-        }
-    }
-</script>
+          if (statusForm.classList.contains('hidden')) {
+              statusForm.classList.remove('hidden');
+              statusForm.style.maxHeight = statusForm.scrollHeight + 'px';
+              statusForm.style.opacity = 1;
+          } else {
+              statusForm.style.maxHeight = '0';
+              statusForm.style.opacity = 0;
+              setTimeout(() => {
+                  statusForm.classList.add('hidden');
+              }, 500); // matches the duration in CSS
+          }
+      }
+  </script>
 <% end %>

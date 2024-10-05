@@ -16,10 +16,9 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html # renders show.html.erb
-      format.turbo_stream # renders the turbo frame response
+      format.turbo_stream # renders turbo stream response, if needed
     end
   end
-
 
   def new
     @project = Project.new
@@ -42,7 +41,12 @@ class ProjectsController < ApplicationController
       end
     end
   end
-  def edit; end
+  def edit
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('projects_list', partial: 'projects/show', locals: { project: @project }) }
+      format.html # Fallback for non-Turbo requests
+    end
+  end
 
   def update
     if @project.update(project_params)
@@ -53,10 +57,12 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
+    @project = Project.find(params[:id])
     @project.destroy
+
     respond_to do |format|
       format.html { redirect_to projects_path, notice: 'Project was successfully deleted.' }
-      format.turbo_stream # Add this line to handle Turbo Stream responses
+      format.turbo_stream
     end
   end
 
