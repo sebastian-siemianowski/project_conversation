@@ -1,5 +1,5 @@
 <!-- app/views/comments/_comment.html.erb -->
-<div class="bg-white shadow-lg rounded-lg p-6 mb-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
+<div id="comment_<%= comment.id %>" class="bg-white shadow-lg rounded-lg p-6 mb-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
   <!-- Comment Content -->
   <p class="text-gray-800 mb-3 leading-relaxed"><%= comment.content %></p>
 
@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
-        <%= button_to 'Yes, Delete', project_comment_path(@project, comment), method: :delete, class: 'inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm' %>
+        <%= button_to 'Yes, Delete', project_comment_path(@project, comment), method: :delete, data: { turbo: true, action: "turbo:submit-end->closeModal" }, class: 'inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm' %>
         <button onclick="closeModal(<%= comment.id %>)" type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
       </div>
     </div>
@@ -47,7 +47,21 @@
         document.getElementById(`modal-${commentId}`).classList.remove('hidden');
     }
 
-    function closeModal(commentId) {
-        document.getElementById(`modal-${commentId}`).classList.add('hidden');
+    function closeModal(event) {
+        // Find the modal based on the element that triggered the event
+        const formElement = event.target.closest('form');
+        const modalElement = formElement.closest('.fixed');
+
+        if (modalElement) {
+            modalElement.classList.add('hidden');
+        }
     }
+
+    // Listen for Turbo Stream submit end events to close modals
+    document.addEventListener('turbo:submit-end', function(event) {
+        const formElement = event.target.closest('form');
+        if (formElement && formElement.querySelector('[data-action="turbo:submit-end->closeModal"]')) {
+            closeModal(event);
+        }
+    });
 </script>
