@@ -1,7 +1,7 @@
 class ProjectsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :change_status]
-  before_action :authorize_admin!, only: [:edit, :update, :destroy, :change_status]
+  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_admin!, only: [:edit, :update, :destroy]
 
   def index
     @projects = Project.all.order(created_at: :asc) # Ensure projects are ordered for consistency
@@ -41,6 +41,7 @@ class ProjectsController < ApplicationController
       end
     end
   end
+
   def edit
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.replace('projects_list', partial: 'projects/show', locals: { project: @project }) }
@@ -50,40 +51,33 @@ class ProjectsController < ApplicationController
 
   def update
     if @project.update(project_params)
-      redirect_to @project, notice: 'Project was successfully updated.'
+      # If the status is updated, create a status change record and add a comment.
+      if params[:project][:status]
+        StatusChange.create!(project: @project, user: current_user, status: @project.status, changed_at: Time.current)
+        @project.comments.create!(
+          content: "Project status changed to #{@project.status&.humanize} by #{current_user.email}",
+          user: current_user
+        )
+      end
+
+      respond_to do |format|
+        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
+        format.turbo_stream
+      end
     else
-      render :edit
+      respond_to do |format|
+        format.html { render :edit }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('status_errors', partial: 'shared/errors', locals: { errors: @project.errors }) }
+      end
     end
   end
 
   def destroy
-    @project = Project.find(params[:id])
     @project.destroy
 
     respond_to do |format|
       format.html { redirect_to projects_path, notice: 'Project was successfully deleted.' }
       format.turbo_stream
-    end
-  end
-
-  def change_status
-    @project.status = params[:status]
-    if @project.save
-      StatusChange.create!(project: @project, user: current_user, status: @project.status, changed_at: Time.current)
-      @project.comments.create!(
-        content: "Project status changed to #{@project.status&.humanize} by #{current_user.email}",
-        user: current_user
-      )
-
-      respond_to do |format|
-        format.html { redirect_to @project, notice: 'Project status was successfully changed.' }
-        format.turbo_stream # Add this to handle Turbo Stream responses
-      end
-    else
-      respond_to do |format|
-        format.html { redirect_to @project, alert: 'Unable to change project status.' }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('status_errors', partial: 'shared/errors', locals: { errors: @project.errors }) }
-      end
     end
   end
 
