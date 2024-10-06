@@ -25,7 +25,7 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    @project = current_user.projects.build(project_params)
+    @project = current_user.projects.build({status: 'not_started'}.merge(project_params))
 
     if @project.save
       @projects = Project.all.order(created_at: :asc) # Make sure to fetch all projects
