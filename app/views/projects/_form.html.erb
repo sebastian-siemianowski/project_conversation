@@ -1,27 +1,31 @@
-<!-- app/views/projects/_form.html.erb -->
-<%= form_with(model: project, local: true) do |form| %>
+<%= form_with(model: project, local: true, class: 'space-y-6') do |form| %>
+  <!-- Error Messages -->
   <% if project.errors.any? %>
-    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-      <h2 class="font-bold mb-2">Please correct the following errors:</h2>
-      <ul>
+    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md mb-6">
+      <h2 class="font-semibold mb-2">Please correct the following errors:</h2>
+      <ul class="list-disc list-inside">
         <% project.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+          <li class="text-sm"><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
+  <!-- Title Field -->
   <div class="mb-4">
-    <%= form.label :title, class: 'block text-gray-700' %>
-    <%= form.text_field :title, class: 'w-full border rounded p-2' %>
+    <%= form.label :title, class: 'block text-gray-700 font-medium mb-2' %>
+    <%= form.text_field :title, class: 'w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-300 ease-in-out' %>
   </div>
 
+  <!-- Description Field -->
   <div class="mb-4">
-    <%= form.label :description, class: 'block text-gray-700' %>
-    <%= form.text_area :description, class: 'w-full border rounded p-2' %>
+    <%= form.label :description, class: 'block text-gray-700 font-medium mb-2' %>
+    <%= form.text_area :description, rows: 5, class: 'w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-300 ease-in-out' %>
   </div>
 
+  <!-- Submit Button -->
   <div class="text-center">
-    <%= form.submit 'Create Project', class: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+    <%= form.submit project.new_record? ? 'Create Project' : 'Update Project',
+                    class: 'bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-medium py-3 px-8 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105' %>
   </div>
 <% end %>
