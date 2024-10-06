@@ -1,54 +1,77 @@
 <!-- app/views/comments/_comment.html.erb -->
-<div id="comment_<%= comment.id %>" class="bg-white shadow-lg rounded-lg p-6 mb-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
-  <!-- Comment Content -->
-  <p class="text-gray-800 mb-3 leading-relaxed"><%= comment.content %></p>
+<%= turbo_frame_tag dom_id(comment) do %>
+  <div id="comment_<%= comment.id %>" class="bg-white shadow-lg rounded-lg p-6 mb-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
+    <!-- Comment Content -->
+    <p id="comment-content-<%= comment.id %>" class="text-gray-800 mb-3 leading-relaxed"><%= comment.content %></p>
 
-  <!-- Comment Metadata -->
-  <p class="text-sm text-gray-500">
-    Posted by: <span class="font-medium"><%= comment.user.email %></span> on <%= comment.created_at.strftime("%B %d, %Y at %I:%M %p") %>
-  </p>
-
-  <% if current_user == comment.user || current_user.admin? %>
-    <!-- Action Buttons -->
-    <div class="mt-4 flex space-x-4">
-      <!-- Edit Button -->
-      <%= link_to 'Edit', edit_project_comment_path(@project, comment), class: 'inline-block px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-semibold hover:bg-blue-600 transition duration-300 ease-in-out' %>
-
-      <!-- Delete Button -->
-      <button onclick="openModal(<%= comment.id %>)" class="inline-block px-4 py-2 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition duration-300 ease-in-out">Delete</button>
-    </div>
-  <% end %>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="modal-<%= comment.id %>" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
-
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-    <div class="inline-block overflow-hidden transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-      <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-        <h3 class="text-lg font-medium text-gray-900" id="modal-title">Delete Comment</h3>
-        <div class="mt-2">
-          <p class="text-sm text-gray-500">Are you sure you want to delete this comment? This action cannot be undone.</p>
+    <!-- Comment Edit Form (Hidden by default) -->
+    <div id="edit-form-<%= comment.id %>" class="hidden">
+      <%= form_with(model: [@project, comment], data: { turbo_frame: dom_id(comment) }, class: "space-y-4") do |form| %>
+        <%= form.text_area :content, rows: 3, class: "w-full p-2 border rounded" %>
+        <div class="flex justify-end space-x-4">
+          <%= form.submit 'Save', class: 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600' %>
+          <button type="button" onclick="toggleEditForm(<%= comment.id %>)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
         </div>
+      <% end %>
+    </div>
+
+    <!-- Comment Metadata -->
+    <p class="text-sm text-gray-500">
+      Posted by: <span class="font-medium"><%= comment.user.email %></span> on <%= comment.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+    </p>
+
+    <% if current_user == comment.user || current_user.admin? %>
+      <!-- Action Buttons -->
+      <div class="mt-4 flex space-x-4">
+        <!-- Edit Button -->
+        <button onclick="toggleEditForm(<%= comment.id %>)" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-semibold hover:bg-blue-600 transition duration-300 ease-in-out">Edit</button>
+
+        <!-- Delete Button -->
+        <button onclick="openModal(<%= comment.id %>)" class="inline-block px-4 py-2 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition duration-300 ease-in-out">Delete</button>
       </div>
-      <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
-        <%= button_to 'Yes, Delete', project_comment_path(@project, comment), method: :delete, data: { turbo: true, action: "turbo:submit-end->closeModal" }, class: 'inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm' %>
-        <button onclick="closeModal(<%= comment.id %>)" type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
+    <% end %>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="modal-<%= comment.id %>" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div class="inline-block overflow-hidden transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+          <h3 class="text-lg font-medium text-gray-900" id="modal-title">Delete Comment</h3>
+          <div class="mt-2">
+            <p class="text-sm text-gray-500">Are you sure you want to delete this comment? This action cannot be undone.</p>
+          </div>
+        </div>
+        <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
+          <%= button_to 'Yes, Delete', project_comment_path(@project, comment), method: :delete, data: { turbo: true, action: "turbo:submit-end->closeModal" }, class: 'inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm' %>
+          <button onclick="closeModal(<%= comment.id %>)" type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 sm:mt-0 sm:w-auto sm:text-sm">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>
 
+<!-- JavaScript for Inline Editing and Modal -->
 <script>
+    function toggleEditForm(commentId) {
+        const contentElement = document.getElementById(`comment-content-${commentId}`);
+        const formElement = document.getElementById(`edit-form-${commentId}`);
+
+        if (contentElement && formElement) {
+            contentElement.classList.toggle('hidden');
+            formElement.classList.toggle('hidden');
+        } else {
+            console.error('Could not find content or form elements to toggle.');
+        }
+    }
+
     function openModal(commentId) {
         document.getElementById(`modal-${commentId}`).classList.remove('hidden');
     }
 
     function closeModal(event) {
-        // Find the modal based on the element that triggered the event
         const formElement = event.target.closest('form');
         const modalElement = formElement.closest('.fixed');
 
@@ -57,7 +80,6 @@
         }
     }
 
-    // Listen for Turbo Stream submit end events to close modals
     document.addEventListener('turbo:submit-end', function(event) {
         const formElement = event.target.closest('form');
         if (formElement && formElement.querySelector('[data-action="turbo:submit-end->closeModal"]')) {
