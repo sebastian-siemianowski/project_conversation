@@ -62,7 +62,7 @@ class ProjectsController < ApplicationController
 
       respond_to do |format|
         format.html { redirect_to @project, notice: 'Project was successfully updated.' }
-        format.turbo_stream
+        format.turbo_stream # This will render `update.turbo_stream.erb`
       end
     else
       respond_to do |format|

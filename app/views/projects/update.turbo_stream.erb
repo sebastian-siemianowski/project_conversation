@@ -1,1 +1,13 @@
+<!-- app/views/projects/update.turbo_stream.erb -->
+<%= turbo_stream.replace "project_status_#{@project.id}" do %>
+  <%= turbo_frame_tag "project_status_#{@project.id}" do %>
+    <%= render partial: 'projects/status', locals: { project: @project } %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace 'comments_list' do %>
+  <%= turbo_frame_tag 'comments_list' do %>
+    <%= render partial: 'comments/list', locals: { comments: @project.comments } %>
+  <% end %>
+<% end %>
 
