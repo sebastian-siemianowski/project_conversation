@@ -11,11 +11,10 @@ This is a Ruby on Rails application that allows users to create and manage proje
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
-- [Notes](#notes)
 
 ## Tech Stack
 - **Backend:** Ruby on Rails (latest)
-- **Frontend:** Tailwind CSS, Slim templates
+- **Frontend:** HTML ERB templates, Tailwind CSS
 - **Database:** PostgreSQL
 - **Authentication:** Devise
 - **Pagination:** Kaminari
@@ -120,5 +119,3 @@ The application is hosted on [Fly.io](https://fly.io/). To deploy it yourself, f
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-##
