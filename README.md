@@ -1,6 +1,6 @@
 # Project Conversation History
 
-This is a Ruby on Rails application that allows users to create and manage projects. Users can add comments and change the project's status. The project conversation history records comments and status changes for easy tracking.
+This is a Ruby on Rails application that allows users to create and manage projects. Users can add comments, change the project's status, and view a history of conversations and status updates. The application is currently hosted on [Fly.io](https://project-conversation.fly.dev/).
 
 ## Table of Contents
 - [Tech Stack](#tech-stack)
@@ -11,6 +11,7 @@ This is a Ruby on Rails application that allows users to create and manage proje
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
+- [Notes](#notes)
 
 ## Tech Stack
 - **Backend:** Ruby on Rails (latest)
@@ -19,16 +20,16 @@ This is a Ruby on Rails application that allows users to create and manage proje
 - **Authentication:** Devise
 - **Pagination:** Kaminari
 - **JavaScript:** Stimulus, Turbo
-- **Deployment:** Heroku
+- **Deployment:** Fly.io
 
 ## Features
 - User authentication using Devise.
-- Projects can be created, edited, and deleted by users.
-- Users can add comments to projects.
-- Users can change the status of a project (e.g., Not Started, In Progress, Completed).
-- Comment history with pagination using Kaminari.
 - Role-based permissions (Admins can edit and delete all content, while Members have limited access).
+- Projects can be created, edited, and deleted by users.
+- Users can add comments to projects and change the project's status (e.g., Not Started, In Progress, Completed, On Hold).
+- Comment history with pagination using Kaminari.
 - Real-time comment updates using Turbo.
+- Admin users have full functionality, while member accounts have limited access.
 
 ## Setup and Installation
 
@@ -37,7 +38,7 @@ This is a Ruby on Rails application that allows users to create and manage proje
 - Rails (latest version)
 - PostgreSQL
 - Node.js and Yarn
-- Heroku CLI (for deployment)
+- Fly.io CLI (for deployment)
 
 ### Installation
 1. **Clone the repository:**
@@ -74,9 +75,11 @@ This is a Ruby on Rails application that allows users to create and manage proje
    Visit `http://localhost:3000` in your web browser.
 
 ## Usage
-- Sign up or log in as a user.
+- Visit the [hosted application](https://project-conversation.fly.dev/).
+- Create an account to log in.
+- Admin users have full access to manage all content, while member accounts have limited functionality.
 - Create a new project, add comments, and change the project's status.
-- Admin users can manage all content, while regular members have limited access.
+- Real-time updates are available for comments and status changes using Turbo Streams.
 
 ## Testing
 - This application uses RSpec for testing.
@@ -86,31 +89,26 @@ This is a Ruby on Rails application that allows users to create and manage proje
     ```
 
 ## Deployment
-To deploy this application to Heroku:
+The application is hosted on [Fly.io](https://fly.io/). To deploy it yourself, follow these steps:
 
-1. **Log in to Heroku:**
+1. **Log in to Fly.io:**
     ```bash
-    heroku login
+    fly auth login
     ```
 
-2. **Create a new Heroku app:**
+2. **Create a new Fly.io app:**
     ```bash
-    heroku create your-app-name
+    fly launch
     ```
 
-3. **Push to Heroku:**
+3. **Deploy the application:**
     ```bash
-    git push heroku main
+    fly deploy
     ```
 
-4. **Run database migrations on Heroku:**
+4. **Run database migrations on Fly.io:**
     ```bash
-    heroku run rails db:migrate
-    ```
-
-5. **Open the application:**
-    ```bash
-    heroku open
+    fly ssh console -C "bin/rails db:migrate"
     ```
 
 ## Contributing
@@ -122,3 +120,5 @@ To deploy this application to Heroku:
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+##
