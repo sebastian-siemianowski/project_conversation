@@ -44,7 +44,7 @@ class ProjectsController < ApplicationController
 
   def edit
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace('projects_list', partial: 'projects/show', locals: { project: @project }) }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('projects_list', template: 'projects/show', locals: { project: @project }) }
       format.html # Fallback for non-Turbo requests
     end
   end
