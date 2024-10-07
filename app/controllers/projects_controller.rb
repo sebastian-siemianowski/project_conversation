@@ -9,9 +9,9 @@ class ProjectsController < ApplicationController
 
   def show
     @project = Project.find(params[:id])
-    @comments = @project.comments.order(created_at: :asc).page(params[:page]).per(10)
+    @comments = @project.comments.order(created_at: :asc).page(params[:page]).per(7)
     if params[:page].blank?
-      @comments = @project.comments.order(:created_at).page(@comments.total_pages).per(10)
+      @comments = @project.comments.order(:created_at).page(@comments.total_pages).per(7)
     end
 
     respond_to do |format|
