@@ -1,0 +1,42 @@
+<div class="bg-gray-100 p-8 rounded-lg mb-10 shadow-inner border relative">
+  <% current_project = local_assigns[:project] || @project %>
+  <!-- Edit Button in Upper Right Corner -->
+  <% if current_user.admin? %>
+    <button data-project-id="<%= current_project.id %>" class="absolute top-4 right-8 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-200 edit-details-button">
+      Edit Details
+    </button>
+  <% end %>
+
+  <!-- Title and Description -->
+  <div class="p-8">
+    <h1 class="text-5xl font-extrabold text-gray-900 mb-6 text-center"><%= current_project.title %></h1>
+    <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center"><%= current_project.description %></p>
+  </div>
+</div>
+
+<!-- Inline Edit Form (Initially Hidden) -->
+<% if current_user.admin? %>
+  <div id="edit-details-form-<%= current_project.id %>" class="mt-8 hidden opacity-0 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+    <%= form_with model: current_project, url: project_path(current_project), method: :patch, data: { turbo_frame: "project_details_#{current_project.id}" }, class: "space-y-4" do |form| %>
+      <!-- Title Field -->
+      <div>
+        <%= form.label :title, class: "block text-lg font-semibold text-gray-700 mb-2" %>
+        <%= form.text_field :title, class: "w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out" %>
+      </div>
+
+      <!-- Description Field -->
+      <div>
+        <%= form.label :description, class: "block text-lg font-semibold text-gray-700 mb-2" %>
+        <%= form.text_area :description, rows: 4, class: "w-full px-5 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out" %>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end space-x-4">
+        <%= form.submit "Save Changes", class: "bg-gradient-to-br from-green-400 to-lime-500 hover:from-green-500 hover:to-lime-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:ring-4 focus:outline-none focus:ring-green-200" %>
+        <button type="button" data-project-id="<%= current_project.id %>" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out edit-details-button">
+          Cancel
+        </button>
+      </div>
+    <% end %>
+  </div>
+<% end %>

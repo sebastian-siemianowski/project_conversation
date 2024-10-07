@@ -5,6 +5,12 @@
   <% end %>
 <% end %>
 
+<%= turbo_stream.replace "project_details_#{@project.id}" do %>
+  <%= turbo_frame_tag "project_details_#{@project.id}" do %>
+    <%= render partial: 'projects/details', locals: { project: @project } %>
+  <% end %>
+<% end %>
+
 <%= turbo_stream.replace 'comments_list' do %>
   <%= turbo_frame_tag 'comments_list' do %>
     <%= render partial: 'comments/list', locals: { comments: @project.comments } %>

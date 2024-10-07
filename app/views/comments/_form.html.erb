@@ -1,12 +1,11 @@
-<!-- app/views/comments/_form.html.erb -->
-<%= form_with(model: [@project, comment], local: true, class: "mt-4 bg-white p-6 rounded-lg shadow-md") do |form| %>
+<%= form_with(model: [@project, comment], local: true, class: "mt-8 bg-gray-50 p-8 rounded-lg shadow-lg space-y-6") do |form| %>
   <!-- Comment Text Area -->
-  <div class="mb-6">
-    <%= form.text_area :content, placeholder: "Write your comment...", rows: 4, class: "w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-400 transition duration-300 ease-in-out" %>
+  <div>
+    <%= form.text_area :content, placeholder: "Write your comment...", rows: 4, class: "w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-500 transition duration-300 ease-in-out" %>
   </div>
 
   <!-- Submit Button -->
   <div class="text-right">
-    <%= form.submit "Add Comment", class: "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out" %>
+    <%= form.submit "Add Comment", class: "bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800" %>
   </div>
 <% end %>
